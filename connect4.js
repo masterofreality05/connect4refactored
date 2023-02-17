@@ -46,6 +46,7 @@ class Game {
     this.boundHTML()
     this.boundFind = this.findSpotForCol.bind(this)
     this.boundPlace = this.placeInTable.bind(this)
+    this.boundClick2 = this.handleClick.bind(this)
    
 
 
@@ -101,6 +102,7 @@ if(this.board[0][x]){
 
   for (let y = this.HEIGHT - 1; y >= 0; y--) {
     if (!this.board[y][x]) {
+      console.log(y)
       return y;
     }
   }
@@ -169,10 +171,6 @@ checkForWin() {
 
 handleClick(evt) {
   this.currCounter++
-  console.log(this.currCounter)
-  
-  console.log(this.player1)
-  console.log("check")
   // get x from ID of clicked cell
   const x = +evt.target.id;
   console.log(x)
@@ -182,7 +180,56 @@ handleClick(evt) {
   if (y === null) {
     return;
   }
-  console.log(this.board)
+
+  // place piece in board and add to HTML table
+  this.board[y][x] = this.currPlayer.colour;
+  this.boundPlace(y, x);
+  
+  let win = false;
+  let tie = false;
+
+  if(this.currPlayer == this.player1 && this.player2.name == "Computer"){
+    console.log("against the computer")
+    let randomNumb = Math.floor(Math.random() * this.WIDTH + 1)
+    console.log(randomNumb)
+    
+   setTimeout(this.boundClick2,1000)
+  }
+  // check for win
+
+  if (this.checkForWin.bind(this)(this._win.bind(this))) {
+    
+    return this.endGame(`${this.currPlayer.name} won!`);
+    win = true;
+  }
+  
+  // check for tie
+  if (this.board.every(row => row.every(cell => cell))) {
+    return this.endGame('Tie!');
+    tie = true;
+
+    
+  }
+
+
+    
+  // switch players
+  this.currCounter % 2 == 1? this.currPlayer = this.player1: this.currPlayer = this.player2;
+  console.log(this.currPlayer)
+}
+
+handleClick2(random) {
+  this.currCounter++
+  // get x from ID of clicked cell
+  const x = random;
+  console.log(x)
+
+  // get next spot in column (if none, ignore click)
+  const y = this.boundFind(x);
+  if (y === null) {
+    return;
+  }
+
   // place piece in board and add to HTML table
   this.board[y][x] = this.currPlayer.colour;
   this.boundPlace(y, x);
